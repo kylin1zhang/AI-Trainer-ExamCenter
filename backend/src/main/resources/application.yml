@@ -1,0 +1,82 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /
+
+spring:
+  application:
+    name: examcenter-backend
+  
+  # 禁用 Redis 自动配置（Redis 不可用时）
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
+      - org.springframework.boot.autoconfigure.data.redis.RedisRepositoriesAutoConfiguration
+  
+  # 数据源配置
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/exam_center?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai
+    username: root
+    password: Asdf1234
+  
+  # Redis 配置（已禁用，如需使用请安装 Redis 并移除上面的 exclude 配置）
+  # data:
+  #   redis:
+  #     host: localhost
+  #     port: 6379
+  #     password: 
+  #     database: 0
+  #     timeout: 3000ms
+  #     lettuce:
+  #       pool:
+  #         max-active: 8
+  #         max-idle: 8
+  #         min-idle: 0
+  #         max-wait: -1ms
+
+# MyBatis Plus 配置
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  global-config:
+    db-config:
+      logic-delete-field: deleted
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+  mapper-locations: classpath:mapper/*.xml
+
+# JWT 配置
+jwt:
+  secret: zhixuewujie-exam-center-secret-key-2025
+  expiration: 604800000  # 7天（毫秒）
+  header: Authorization
+  prefix: Bearer 
+
+# Knife4j 文档配置
+knife4j:
+  enable: true
+  openapi:
+    title: AI Trainer Exam Center API
+    description: 上海智学无界教育科技有限公司 - 在线题库系统 API 文档
+    version: 1.0.0
+    contact:
+      name: 智学无界
+      email: contact@zhixuewujie.com
+    group:
+      default:
+        group-name: default
+        api-rule: package
+        api-rule-resources:
+          - com.zhixuewujie.examcenter.controller
+
+# 日志配置
+logging:
+  level:
+    com.zhixuewujie.examcenter: debug
+    org.springframework.security: debug
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{50} - %msg%n"
+
+

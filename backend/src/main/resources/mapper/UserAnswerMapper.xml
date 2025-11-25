@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhixuewujie.examcenter.mapper.UserAnswerMapper">
+
+    <!-- 获取我的错题（按题目ID去重） -->
+    <select id="selectWrongQuestions" resultType="java.util.HashMap">
+        SELECT 
+            question_id,
+            COUNT(*) as wrong_count,
+            MAX(create_time) as last_wrong_time
+        FROM tb_user_answer
+        WHERE user_id = #{userId}
+        <if test="bankId != null">
+            AND bank_id = #{bankId}
+        </if>
+        AND is_correct = 0
+        GROUP BY question_id
+        ORDER BY last_wrong_time DESC
+    </select>
+
+    <!-- 获取易错题（错误次数 >= 2） -->
+    <select id="selectDifficultQuestions" resultType="java.util.HashMap">
+        SELECT 
+            question_id,
+            SUM(CASE WHEN is_correct = 0 THEN 1 ELSE 0 END) as wrong_count,
+            COUNT(*) as total_attempts
+        FROM tb_user_answer
+        WHERE user_id = #{userId}
+        <if test="bankId != null">
+            AND bank_id = #{bankId}
+        </if>
+        GROUP BY question_id
+        HAVING wrong_count >= 2
+        ORDER BY wrong_count DESC
+    </select>
+
+</mapper>
